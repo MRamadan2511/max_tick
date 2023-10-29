@@ -138,4 +138,7 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
 AWS_ACCESS_KEY_ID=os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY=os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME=os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_QUERYSTRING_AUTH=os.environ.get('AWS_QUERYSTRING_AUTH')
+AWS_QUERYSTRING_AUTH=str(os.environ.get('DEBUG')) == '0'
+#Fixeing Region Error
+AWS_S3_REGION_NAME = "eu-north-1"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
