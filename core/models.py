@@ -43,5 +43,10 @@ class Warehouse(models.Model):
 
 
 class Ticket(models.Model):
+    order_id = models.CharField(max_length=15)
     description = models.TextField('Description', blank=True, null=True)
     post_image= models.ImageField(upload_to='image/post' ,blank=True, null=True,)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name='ticket_warehouses')
+
+    def __str__(self):
+        return f"{self.order_id}"
