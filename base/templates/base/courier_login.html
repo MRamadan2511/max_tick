@@ -1,0 +1,13 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+  <h2>Courier Login</h2>
+  <form method="post" action="{% url 'courier_login' %}" class="form">
+      {% csrf_token %}
+      {{ form|crispy }} 
+      <button type="submit" class="btn btn-danger">Log in</button>
+  </form>
+  {% endblock content %}

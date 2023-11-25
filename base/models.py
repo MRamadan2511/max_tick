@@ -44,6 +44,9 @@ class CustomUserManager(UserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True, default='', unique=True)
     name = models.CharField(max_length=255, blank=True, default='')
+    company = models.ForeignKey(Company,   on_delete=models.CASCADE, related_name='user_company')
+    user_type = models.ForeignKey(UserType,   on_delete=models.CASCADE, related_name='user_type')
+
 
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
@@ -74,8 +77,6 @@ class Department(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_departments')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
 
     def __str__(self):
         return f"{self.name}  ->  {self.company}"
