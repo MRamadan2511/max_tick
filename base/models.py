@@ -8,9 +8,9 @@ class Company(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     def __str__(self):
         return f"{self.name}"
+
 
 class UserType(models.Model):
     type =  models.CharField(max_length=50, unique=True)
@@ -41,17 +41,15 @@ class CustomUserManager(UserManager):
         extra_fields.setdefault('is_superuser', True)
         return self._create_user(email, password, **extra_fields)
     
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True, default='', unique=True)
     name = models.CharField(max_length=255, blank=True, default='')
     company = models.ForeignKey(Company,   on_delete=models.CASCADE, related_name='user_company')
     user_type = models.ForeignKey(UserType,   on_delete=models.CASCADE, related_name='user_type')
-
-
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-
     date_joined = models.DateTimeField(default=timezone.now)
     last_login = models.DateTimeField(blank=True, null=True)
 
@@ -81,6 +79,7 @@ class Department(models.Model):
     def __str__(self):
         return f"{self.name}  ->  {self.company}"
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=100, unique=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_tags')
@@ -89,6 +88,7 @@ class Tag(models.Model):
 
     def __str__(self):
         return f"{self.name}  ->  {self.company}"
+
 
 class Warehouse(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -105,6 +105,7 @@ class Ticket(models.Model):
     description = models.TextField('Description', blank=True, null=True)
     post_image= models.ImageField(upload_to='image/post' ,blank=True, null=True,)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name='ticket_warehouses')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_ticket')
 
     def __str__(self):
         return f"{self.order_id}"

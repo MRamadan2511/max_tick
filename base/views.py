@@ -7,9 +7,9 @@ from .models import Ticket
 
 
 def home(request):
-    tic = Ticket.objects.all()
+    ticket = Ticket.objects.all()
 
-    return render(request, 'base/home.html', context={"tic":tic},)
+    return render(request, 'base/home.html', context={"ticket":ticket},)
 # views.py
 
 

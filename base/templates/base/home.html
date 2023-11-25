@@ -2,6 +2,16 @@
 
 {% block  content %}
 <h1>Hello worled</h1>
+{% for tic in ticket %}
+    {{tic.order_id}}
+
+    {% if ticket.post_image%}
+        <tr>
+        <td class=""><b>Attachments</b></td>
+        <td> <a href="{{ticket.post_image.url}}" target="_blank"><p>Attched File</p></a></td>
+        </tr>
+    {% endif %}
+{% endfor %}
 {% endblock  %}
 
 
