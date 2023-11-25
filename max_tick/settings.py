@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'core',
+    'base',
     'storages',
 ]
 
@@ -114,11 +114,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Cairo'
 
-USE_I18N = True
+# USE_I18N = True
 
-USE_TZ = True
+# USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -146,3 +146,7 @@ AWS_QUERYSTRING_AUTH=str(os.environ.get('DEBUG')) == '1'
 #Fixeing Region Error
 AWS_S3_REGION_NAME = "eu-north-1"
 AWS_S3_SIGNATURE_VERSION = "s3v4"
+
+
+
+AUTH_USER_MODEL = 'base.user'
