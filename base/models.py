@@ -11,6 +11,15 @@ class Company(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+class Location(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_locations')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name}  ->  {self.company}"
+
 
 class UserType(models.Model):
     type =  models.CharField(max_length=50, unique=True)
@@ -47,6 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255, blank=True, default='')
     company = models.ForeignKey(Company,   on_delete=models.CASCADE, related_name='user_company')
     user_type = models.ForeignKey(UserType,   on_delete=models.CASCADE, related_name='user_type')
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='user_locations')
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -90,21 +100,14 @@ class Tag(models.Model):
         return f"{self.name}  ->  {self.company}"
 
 
-class Warehouse(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_warehouses')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"{self.name}  ->  {self.company}"
 
 
 class Ticket(models.Model):
     order_id = models.CharField(max_length=15)
     description = models.TextField('Description', blank=True, null=True)
     post_image= models.ImageField(upload_to='image/post' ,blank=True, null=True,)
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name='ticket_warehouses')
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='ticket_locations')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_ticket')
 
     def __str__(self):

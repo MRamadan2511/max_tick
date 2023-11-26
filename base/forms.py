@@ -9,7 +9,7 @@ from .models import User, UserType, Ticket
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['order_id', 'description', 'post_image', 'warehouse']
+        fields = ['order_id', 'description', 'post_image',]
 
 
 

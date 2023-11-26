@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from .forms import AgentLoginForm, CourierLoginForm, TicketForm
@@ -18,6 +18,7 @@ def ticket_create(request):
         if form.is_valid():
             ticket = form.save(commit=False)
             ticket.user = request.user  # Assuming you have user authentication in place
+            ticket.location = request.user.location
             ticket.save()
             return redirect('ticket_detail', pk=ticket.pk)  # Redirect to ticket detail page
     else:
@@ -26,7 +27,9 @@ def ticket_create(request):
     return render(request, 'base/ticket_create.html', {'form': form})
 
 
-
+def ticket_detail(request, pk):
+    ticket = get_object_or_404(Ticket, pk=pk)
+    return render(request, 'base/ticket_detail.html', {'ticket': ticket})
 
 
 class AgentLoginView(LoginView):
