@@ -2,7 +2,16 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
-from .models import User, UserType
+from .models import User, UserType, Ticket
+
+
+
+class TicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['order_id', 'description', 'post_image', 'warehouse']
+
+
 
 class AgentLoginForm(AuthenticationForm):
     def clean(self):
