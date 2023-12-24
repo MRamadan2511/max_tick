@@ -18,14 +18,24 @@ class Location(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name}  ->  {self.company}"
+        return f"{self.name}"
 
 
 class UserType(models.Model):
     type =  models.CharField(max_length=50, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.type}"
+
+class Status(models.Model):
+    status =  models.CharField(max_length=50, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.status}"
 
 
 class CustomUserManager(UserManager):
@@ -52,16 +62,18 @@ class CustomUserManager(UserManager):
     
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(blank=True, default='', unique=True)
-    name = models.CharField(max_length=255, blank=True, default='')
-    company = models.ForeignKey(Company,   on_delete=models.CASCADE, related_name='user_company')
-    user_type = models.ForeignKey(UserType,   on_delete=models.CASCADE, related_name='user_type')
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='user_locations')
-    is_active = models.BooleanField(default=True)
+    email       = models.EmailField(blank=True, default='', unique=True)
+    name        = models.CharField(max_length=255, blank=True, default='')
+    is_active   = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
+    is_staff    = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
-    last_login = models.DateTimeField(blank=True, null=True)
+    last_login  = models.DateTimeField(blank=True, null=True)
+    created_at  = models.DateTimeField(auto_now_add=True)
+    updated_at  = models.DateTimeField(auto_now=True)
+    company     = models.ForeignKey(Company,   on_delete=models.CASCADE, related_name='user_company')
+    user_type   = models.ForeignKey(UserType,   on_delete=models.CASCADE, related_name='user_type')
+    location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='user_locations')
 
     objects = CustomUserManager()
 
@@ -78,6 +90,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def get_short_name(self):
         return self.name or self.email.split('@')[0]
+    
+    def __str__(self):
+        return f"{self.name}"
 
 
 class Department(models.Model):
@@ -87,7 +102,7 @@ class Department(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name}  ->  {self.company}"
+        return f"{self.name}"
 
 
 class Tag(models.Model):
@@ -97,20 +112,23 @@ class Tag(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name}  ->  {self.company}"
-
-
-
-
+        return f"{self.name}"
+    
 
 class Ticket(models.Model):
-    order_id = models.CharField(max_length=15)
+    order_id    = models.CharField(max_length=15)
     description = models.TextField('Description', blank=True, null=True)
-    post_image= models.ImageField(upload_to='image/post' ,blank=True, null=True,)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='ticket_locations')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_ticket')
+    post_image  = models.ImageField(upload_to='image/post' ,blank=True, null=True,)
+    created_at  = models.DateTimeField(auto_now_add=True)
+    updated_at  = models.DateTimeField(auto_now=True)
+    location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='ticket_locations')
+    user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_ticket')
+    status      = models.ForeignKey(Status,   on_delete=models.CASCADE, related_name='tickt_status', default="1")
+    tag         = models.ForeignKey(Tag,   on_delete=models.CASCADE, related_name='tickt_tag',  blank=True, null=True)
+    department  = models.ForeignKey(Department,   on_delete=models.CASCADE, related_name='tickt_department', blank=True, null=True)
 
     def __str__(self):
         return f"{self.order_id}"
-    
+    class Meta:
+        ordering = ['-updated_at', ]
 

@@ -1,6 +1,54 @@
-<h2>Ticket Details</h2>
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+{% comment %} <h2>Ticket Details</h2>
 <p>Order ID: {{ ticket.order_id }}</p>
 <p>Description: {{ ticket.description }}</p>
 <p>Warehouse: {{ ticket.location }}</p>
 <p>User: {{ ticket.user }}</p>
-<img src="{{ ticket.post_image.url }}" alt="Ticket Image">
+<img src="{{ ticket.post_image.url }}" alt="Ticket Image"> {% endcomment %}
+
+
+
+
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">{{ ticket.order_id }}</h5>
+          </div>
+          <div class="card-body">
+            
+            <p class="card-text">{{ ticket.description }}</p>
+            {% if ticket.post_image %}
+              <img src="{{ ticket.post_image.url }}" class="img-fluid" alt="Ticket Image">
+            {% endif %}
+            <p class="card-text">Location: {{ ticket.location }}</p>
+            <p class="card-text">Created at: {{ ticket.created_at }}</p>
+            <p class="card-text">Updated at: {{ ticket.updated_at }}</p>
+            <p class="card-text">Status: {{ ticket.status }}</p>
+            <p class="card-text">User: {{ ticket.user }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            Actions
+          </div>
+          <div class="card-body">
+            <!-- Add your ticket actions here (e.g., update, delete, etc.) -->
+            <a href="#" class="btn btn-primary">Update Ticket</a>
+            <a href="#" class="btn btn-danger">Delete Ticket</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
