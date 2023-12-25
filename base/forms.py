@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
-from .models import User, UserType, Ticket
+from .models import User, UserType, Ticket, Comment
 
 
 
@@ -39,3 +39,15 @@ class CourierLoginForm(AuthenticationForm):
         except (UserType.DoesNotExist, User.DoesNotExist):
             raise ValidationError("Courier user does not exist or is not active")
         return username
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['comment', 'comment_image']
+
+        labels = {
+            'comment': '',
+            'comment_image': ''
+        }
+

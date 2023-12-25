@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from .forms import AgentLoginForm, CourierLoginForm, TicketForm
+from .forms import AgentLoginForm, CourierLoginForm, TicketForm, CommentForm
 
-from .models import Ticket
+from .models import Ticket, Comment
 
 
 def home(request):
@@ -29,7 +29,32 @@ def ticket_create(request):
 
 def ticket_detail(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
-    return render(request, 'base/ticket_detail.html', {'ticket': ticket})
+
+    comments = ticket.comment_set.all()
+    comment_form = CommentForm()
+    
+    return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments, 'comment_form': comment_form})
+
+
+
+def add_comment(request, pk):
+    ticket = get_object_or_404(Ticket, pk=pk)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST, request.FILES)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.ticket = ticket
+            comment.user = request.user  # Assuming you have user authentication
+            comment.save()
+            return redirect('ticket_detail', pk=pk)
+    else:
+        form = CommentForm()
+
+    return render(request, 'base/add_comment.html', {'form': form})
+
+
+
 
 
 class AgentLoginView(LoginView):

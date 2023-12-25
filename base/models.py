@@ -129,6 +129,30 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"{self.order_id}"
+    
     class Meta:
         ordering = ['-updated_at', ]
 
+
+class Comment(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
+    comment = models.TextField(blank=True, null=True,)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    comment_image= models.ImageField(upload_to='image/comment' ,blank=True, null=True,)
+
+
+    # def save(self, *args, **kwargs):
+    #     if not self.pk:
+    #         # If this is a new comment, update the assigned user of the ticket
+    #         if not self.ticket.assigned_to and not self.user.is_courier:
+    #             self.ticket.assigned_to = self.user
+    #             self.ticket.save()
+    #     super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['modified', ]
+
+    def __str__(self):
+        return "%s" % (self.ticket.id)

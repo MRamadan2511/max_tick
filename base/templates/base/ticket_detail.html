@@ -3,47 +3,72 @@
 {% block content %}
 {% load crispy_forms_tags %}
 
-{% comment %} <h2>Ticket Details</h2>
-<p>Order ID: {{ ticket.order_id }}</p>
-<p>Description: {{ ticket.description }}</p>
-<p>Warehouse: {{ ticket.location }}</p>
-<p>User: {{ ticket.user }}</p>
-<img src="{{ ticket.post_image.url }}" alt="Ticket Image"> {% endcomment %}
-
-
-
-
   <div class="container mt-5">
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-9">
+
         <div class="card">
+
           <div class="card-header">
-            <h5 class="card-title">{{ ticket.order_id }}</h5>
+            <h5 class="card-title text-center">{{ ticket.order_id }}</h5>
           </div>
+
           <div class="card-body">
-            
             <p class="card-text">{{ ticket.description }}</p>
             {% if ticket.post_image %}
               <img src="{{ ticket.post_image.url }}" class="img-fluid" alt="Ticket Image">
             {% endif %}
             <p class="card-text">Location: {{ ticket.location }}</p>
             <p class="card-text">Created at: {{ ticket.created_at }}</p>
-            <p class="card-text">Updated at: {{ ticket.updated_at }}</p>
             <p class="card-text">Status: {{ ticket.status }}</p>
             <p class="card-text">User: {{ ticket.user }}</p>
           </div>
-        </div>
-      </div>
 
-      <div class="col-md-4">
+        </div>    
+        <div class="card-body">
+          <div class="comments" >
+            {% for comment in comments %}
+            <div class="text-end">
+              <span class="text-end font-weight-normal" >
+                  {% if comment.user == user %}
+                      <small class="text-muted">You Added Comment @ {{ comment.created }}</small>
+                  {% else %}
+                       <small class="text-muted">{{ comment.user }}  Added Comment  @ {{ comment.created }}</small>
+                </span>
+                  {% endif %}
+              <p class="text-end pt-3 ">
+                {{ comment.comment }}
+              </p>
+              {% if comment.comment_image%}
+              <a href="{{comment.comment_image.url}}" target="_blank"> <p class="text-end ">Attched File</p></a>
+              {% endif %}
+              <hr style="height:5px; border: 1px;  background-color:Silver">
+              
+            </div>
+            {% endfor %}
+          </div>
+          <div>
+            <h3 class="text-center">Add New Comment</h3>
+            <form method="post" style="margin-top: 1.3em;" enctype="multipart/form-data" action="{% url 'add_comment' pk=ticket.pk %}">
+              {% csrf_token %}
+              {{ comment_form | crispy }}
+              <button type="submit" class="btn btn-primary  btn-lg" name='add_comment'>Submit</button>
+            </form>
+          </div>
+
+        </div>
+          </div>
+      
+
+      <div class="col-md-3">
         <div class="card">
           <div class="card-header">
             Actions
           </div>
           <div class="card-body">
             <!-- Add your ticket actions here (e.g., update, delete, etc.) -->
-            <a href="#" class="btn btn-primary">Update Ticket</a>
-            <a href="#" class="btn btn-danger">Delete Ticket</a>
+            <a href="#" class="btn btn-primary">Update </a>
+            <a href="#" class="btn btn-danger">Delete </a>
           </div>
         </div>
       </div>

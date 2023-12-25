@@ -2,17 +2,9 @@
 
 {% block  content %}
 <h2 class="card-header mt-3 text-center">All Tickets</h2>
-{% comment %} {% for tic in ticket %}
-    {{tic.order_id}}
-    {% if tic.post_image%}
-        <tr>
-        <td class=""><b>Attachments</b></td>
-        <td> <a href="{{tic.post_image.url}}" target="_blank"><p>Attched File</p></a></td>
-        </tr>
-    {% endif %}
-{% endfor %} {% endcomment %}
 
 <table class="table table-responsive table-striped">
+
     <thead class="table-dark">
         <tr class ="text-center">
             <th scope="col">ID</th>
@@ -23,11 +15,9 @@
             <th scope="col">Updated At</th>
         </tr>
     </thead>
+
     <tbody>
         {% for tic in ticket %}
-   
-    
-
         <tr class ="text-center">
             <td> <a class=" text-decoration-none" href="{% url 'ticket_detail' tic.id %}">{{ tic.order_id }} </a></td>
             <td> {{tic.tag}}</td>
@@ -35,22 +25,10 @@
             <td> {{tic.status}}</td>
             <td> {{tic.user}}</td>
             <td> {{tic.updated_at | timesince}}</td>
-            
         </tr>
         {% endfor %}
     </tbody>
+
   </table>
+  
 {% endblock  %}
-
-
-
-
-    description = models.TextField('Description', blank=True, null=True)
-    post_image  = models.ImageField(upload_to='image/post' ,blank=True, null=True,)
-    created_at  = models.DateTimeField(auto_now_add=True)
-    updated_at  = models.DateTimeField(auto_now=True)
-    location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='ticket_locations')
-    user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_ticket')
-    status      = models.ForeignKey(Status,   on_delete=models.CASCADE, related_name='tickt_status', default="1")
-    tag         = models.ForeignKey(Tag,   on_delete=models.CASCADE, related_name='tickt_tag')
-    department  = models.ForeignKey(Department,   on_delete=models.CASCADE, related_name='tickt_department')
