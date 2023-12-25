@@ -4,6 +4,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from .models import User, UserType, Ticket, Comment
 
+from ckeditor.widgets import CKEditorWidget
+
+
 
 
 class TicketForm(forms.ModelForm):
@@ -42,6 +45,7 @@ class CourierLoginForm(AuthenticationForm):
 
 
 class CommentForm(forms.ModelForm):
+
     class Meta:
         model = Comment
         fields = ['comment', 'comment_image']
@@ -51,3 +55,15 @@ class CommentForm(forms.ModelForm):
             'comment_image': ''
         }
 
+        widgets = {
+                'comment': CKEditorWidget(),
+
+            }
+   
+    def clean_comment(self):
+        comment = self.cleaned_data.get('comment', '').strip()
+
+        if not comment:
+            raise forms.ValidationError("Comment cannot be blank.")
+
+        return comment

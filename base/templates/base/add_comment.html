@@ -1,0 +1,10 @@
+{% load crispy_forms_tags %}
+
+<h3 class="text-center">Add New Comment</h3>
+    <form  method="post" style="margin-top: 1.3em;" enctype="multipart/form-data" action="{% url 'add_comment' pk=ticket.pk %}">
+        {% csrf_token %}
+        {{ comment_form.media }}
+        {{ comment_form | crispy }} 
+        <button type="submit" class="btn btn-primary form-control" name='add_comment'>Submit</button>
+    </form>
+    

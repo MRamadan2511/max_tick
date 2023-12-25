@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.utils import timezone
 
+from ckeditor.fields import RichTextField
 
 class Company(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -136,12 +137,12 @@ class Ticket(models.Model):
 
 class Comment(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
-    comment = models.TextField(blank=True, null=True,)
+    # comment = models.TextField(blank=True, null=True,)
+    comment = RichTextField(blank=False, null=False)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     comment_image= models.ImageField(upload_to='image/comment' ,blank=True, null=True,)
-
 
     # def save(self, *args, **kwargs):
     #     if not self.pk:

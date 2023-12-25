@@ -44,11 +44,21 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     'bootstrap5',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CKEDITOR_UPLOAD_PATH = "image/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'removePlugins': 'uploadimage,image',  # Remove the plugins related to file/image upload
+        # ... other CKEditor settings
+    },
+}
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
 
 
 
@@ -61,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'ckeditor.middleware.CKEditorMiddleware',
 ]
 
 ROOT_URLCONF = 'max_tick.urls'

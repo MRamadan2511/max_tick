@@ -3,6 +3,7 @@
 {% block content %}
 {% load crispy_forms_tags %}
 
+
   <div class="container mt-5">
     <div class="row">
       <div class="col-md-9">
@@ -37,7 +38,7 @@
                 </span>
                   {% endif %}
               <p class="text-end pt-3 ">
-                {{ comment.comment }}
+                {{ comment.comment |safe }}
               </p>
               {% if comment.comment_image%}
               <a href="{{comment.comment_image.url}}" target="_blank"> <p class="text-end ">Attched File</p></a>
@@ -48,12 +49,7 @@
             {% endfor %}
           </div>
           <div>
-            <h3 class="text-center">Add New Comment</h3>
-            <form method="post" style="margin-top: 1.3em;" enctype="multipart/form-data" action="{% url 'add_comment' pk=ticket.pk %}">
-              {% csrf_token %}
-              {{ comment_form | crispy }}
-              <button type="submit" class="btn btn-primary  btn-lg" name='add_comment'>Submit</button>
-            </form>
+            {% include "base/add_comment.html" %}
           </div>
 
         </div>

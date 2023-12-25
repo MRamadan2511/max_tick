@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from .forms import AgentLoginForm, CourierLoginForm, TicketForm, CommentForm
+from django.contrib import messages
 
+
+from .forms import AgentLoginForm, CourierLoginForm, TicketForm, CommentForm
 from .models import Ticket, Comment
 
 
@@ -32,8 +34,9 @@ def ticket_detail(request, pk):
 
     comments = ticket.comment_set.all()
     comment_form = CommentForm()
-    
+
     return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments, 'comment_form': comment_form})
+
 
 
 
@@ -42,16 +45,22 @@ def add_comment(request, pk):
 
     if request.method == 'POST':
         form = CommentForm(request.POST, request.FILES)
+
         if form.is_valid():
             comment = form.save(commit=False)
             comment.ticket = ticket
             comment.user = request.user  # Assuming you have user authentication
             comment.save()
+            messages.success(request, "comment added Successfully")
+            return redirect('ticket_detail', pk=pk)
+        else:
+            # Form is not valid, comment is blank
+            messages.error(request, "blaaaaaaaaaaank")
             return redirect('ticket_detail', pk=pk)
     else:
         form = CommentForm()
-
-    return render(request, 'base/add_comment.html', {'form': form})
+        
+    return render(request, 'base/ticket_detail.html', {'form': form, 'ticket': ticket, })
 
 
 
