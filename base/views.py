@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 
 
-from .forms import AgentLoginForm, CourierLoginForm, TicketForm, CommentForm
+from .forms import AgentLoginForm, CourierLoginForm, TicketForm, CommentForm, UpdateLocationForm, UpdateStatusForm
 from .models import Ticket, Comment
 
 
@@ -29,16 +29,41 @@ def ticket_create(request):
     return render(request, 'base/ticket_create.html', {'form': form})
 
 
+# def ticket_detail(request, pk):
+#     ticket = get_object_or_404(Ticket, pk=pk)
+
+#     comments = ticket.comment_set.all()
+#     comment_form = CommentForm()
+
+#     return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments, 'comment_form': comment_form})
+
+
 def ticket_detail(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
-
     comments = ticket.comment_set.all()
-    comment_form = CommentForm()
 
-    return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments, 'comment_form': comment_form})
+    if request.method == 'POST':
+        location_form = UpdateLocationForm(request.POST, instance=ticket)
+        status_form = UpdateStatusForm(request.POST, instance=ticket)
+    
+        if 'location-submit' in request.POST and location_form.is_valid():
+            location_form.save()
+            messages.success(request, "Location Updated Successfully")
+            return redirect('ticket_detail', pk=pk)
+        else:
+            'status-submit' in request.POST and status_form.is_valid()
+            status_form.save()
+            messages.success(request, "Status Updated Successfully")
+            return redirect('ticket_detail', pk=pk)
+    else:
+        comment_form = CommentForm()
+        location_form = UpdateLocationForm(instance=ticket)
+        status_form = UpdateStatusForm(instance=ticket)
 
-
-
+    return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments, 
+                                                       'comment_form': comment_form,
+                                                         'location_form': location_form,
+                                                         'status_form':status_form})
 
 def add_comment(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
@@ -51,7 +76,7 @@ def add_comment(request, pk):
             comment.ticket = ticket
             comment.user = request.user  # Assuming you have user authentication
             comment.save()
-            messages.success(request, "comment added Successfully")
+            messages.info(request, "comment added Successfully")
             return redirect('ticket_detail', pk=pk)
         else:
             # Form is not valid, comment is blank

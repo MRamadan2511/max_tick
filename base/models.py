@@ -2,7 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.utils import timezone
 
+
 from ckeditor.fields import RichTextField
+
+
 
 class Company(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -11,6 +14,7 @@ class Company(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
 
 class Location(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -29,6 +33,7 @@ class UserType(models.Model):
 
     def __str__(self):
         return f"{self.type}"
+    
 
 class Status(models.Model):
     status =  models.CharField(max_length=50, unique=True)
@@ -143,14 +148,6 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     comment_image= models.ImageField(upload_to='image/comment' ,blank=True, null=True,)
-
-    # def save(self, *args, **kwargs):
-    #     if not self.pk:
-    #         # If this is a new comment, update the assigned user of the ticket
-    #         if not self.ticket.assigned_to and not self.user.is_courier:
-    #             self.ticket.assigned_to = self.user
-    #             self.ticket.save()
-    #     super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['modified', ]

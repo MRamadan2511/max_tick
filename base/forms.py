@@ -67,3 +67,16 @@ class CommentForm(forms.ModelForm):
             raise forms.ValidationError("Comment cannot be blank.")
 
         return comment
+    
+
+
+class UpdateLocationForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['location']
+
+
+class UpdateStatusForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['status']
