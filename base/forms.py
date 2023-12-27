@@ -74,9 +74,25 @@ class UpdateLocationForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['location']
+        # Add a widget to use a dropdown for the location field
+        widgets = {
+                'location': forms.Select(attrs={'class': 'form-control'}),
+                    }
+        labels = {
+            'location': '',
 
+        }
 
 class UpdateStatusForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['status']
+
+
+        widgets = {
+                'status': forms.Select(attrs={'class': 'form-control'}),
+                    }
+        labels = {
+            'status': '',
+
+        }

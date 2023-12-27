@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.utils import timezone
+from django.db.models import Count
 
 
 from ckeditor.fields import RichTextField
@@ -132,6 +133,19 @@ class Ticket(models.Model):
     status      = models.ForeignKey(Status,   on_delete=models.CASCADE, related_name='tickt_status', default="1")
     tag         = models.ForeignKey(Tag,   on_delete=models.CASCADE, related_name='tickt_tag',  blank=True, null=True)
     department  = models.ForeignKey(Department,   on_delete=models.CASCADE, related_name='tickt_department', blank=True, null=True)
+
+
+    @staticmethod
+    def get_status_counts():
+        """
+        Returns a dictionary with the count of tickets for each status.
+        """
+        status_counts = Ticket.objects.values('status__status').annotate(count=Count('status'))
+
+        # Convert the queryset result to a dictionary for easy access
+        status_count_dict = {item['status__status']: item['count'] for item in status_counts}
+
+        return status_count_dict
 
     def __str__(self):
         return f"{self.order_id}"

@@ -10,8 +10,25 @@ from .models import Ticket, Comment
 
 def home(request):
     ticket = Ticket.objects.all()
+    all_ticket = ticket.count()
+    all_status_counts = Ticket.get_status_counts()
+    # Filter tickets for open status
+    open_tickets_count = all_status_counts.get('Open', 0)
+    closed_tickets_count = all_status_counts.get('Closed', 0)
+    overdue_tickets_count = all_status_counts.get('Overdue', 0)
+    waiting_tickets_count = all_status_counts.get('Waiting', 0)
+    inprogress_tickets_count = all_status_counts.get('In Progress', 0)
+    new_tickets_count = all_status_counts.get('New', 0)
 
-    return render(request, 'base/home.html', context={"ticket":ticket},)
+    return render(request, 'base/home.html', context={"ticket":ticket, 
+                                                      "open_tickets_count":open_tickets_count,
+                                                      "closed_tickets_count":closed_tickets_count,
+                                                      "overdue_tickets_count":overdue_tickets_count,
+                                                      "waiting_tickets_count":waiting_tickets_count,
+                                                      "inprogress_tickets_count":inprogress_tickets_count,
+                                                      "new_tickets_count":new_tickets_count,
+                                                      "all_ticket":all_ticket,
+                                                      },)
 
 
 def ticket_create(request):
