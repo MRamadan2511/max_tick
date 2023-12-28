@@ -130,7 +130,7 @@ class Ticket(models.Model):
     updated_at  = models.DateTimeField(auto_now=True)
     location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='ticket_locations')
     user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_ticket')
-    status      = models.ForeignKey(Status,   on_delete=models.CASCADE, related_name='tickt_status', default="1")
+    status      = models.ForeignKey(Status,   on_delete=models.CASCADE, related_name='tickt_status', default="6")
     tag         = models.ForeignKey(Tag,   on_delete=models.CASCADE, related_name='tickt_tag',  blank=True, null=True)
     department  = models.ForeignKey(Department,   on_delete=models.CASCADE, related_name='tickt_department', blank=True, null=True)
 
