@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+{% load my_filters %}
+
+{% block  content %}
+<h2 class="card-header mt-3 text-center">My Tickets</h2>
+
+<table class="table table-responsive table-striped table-hover">
+
+    <thead class="table-dark">
+        <tr class ="text-center">
+            <th scope="col">ID</th>
+            <th scope="col">Tag</th>
+            <th scope="col">Location</th>
+            <th scope="col">Status</th>
+            <th scope="col">Created by</th>
+            <th scope="col">Updated At</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for tic in tickets %}
+        <tr class ="text-center">
+            <td> <a class=" text-decoration-none" href="{% url 'ticket_detail' tic.id %}">{{ tic.order_id }} </a></td>
+            <td> {{tic.tag}}</td>
+            <td> {{tic.location}}</td>
+            <td><span class="{{ tic.status|status_class }}">{{ tic.status }}</span></td>
+
+            <td> {{tic.user}}</td>
+            <td> {{tic.updated_at|timesince}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+  </table>
+  
+{% endblock  %}

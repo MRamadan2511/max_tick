@@ -4,6 +4,7 @@ from .views import AgentLoginView, CourierLoginView
 
 
 urlpatterns = [
+    path('', views.inbox, name='my_inbox'),
     path('home/', views.home, name='home'),
     path('agent_login/', AgentLoginView.as_view(), name='agent_login'),
     path('courier_login/', CourierLoginView.as_view(), name='courier_login'),

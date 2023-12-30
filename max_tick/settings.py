@@ -44,17 +44,18 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     'bootstrap5',
-    'ckeditor',
     'ckeditor_uploader',
+    'ckeditor',
 ]
 
 CKEDITOR_UPLOAD_PATH = "image/"
 CKEDITOR_CONFIGS = {
     'default': {
         'removePlugins': 'uploadimage,image',  # Remove the plugins related to file/image upload
-        # ... other CKEditor settings
     },
 }
+# CKEDITOR_BASEPATH = "/staticfiles/ckeditor/ckeditor/"
+
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -128,6 +129,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+LOGIN_URL = '/courier_login/'  # Change this to the URL of your login page
 
 
 # Internationalization

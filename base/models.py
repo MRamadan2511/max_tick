@@ -26,6 +26,14 @@ class Location(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+class UserRole(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    role = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.role
+
 
 class UserType(models.Model):
     type =  models.CharField(max_length=50, unique=True)
@@ -80,6 +88,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated_at  = models.DateTimeField(auto_now=True)
     company     = models.ForeignKey(Company,   on_delete=models.CASCADE, related_name='user_company')
     user_type   = models.ForeignKey(UserType,   on_delete=models.CASCADE, related_name='user_type')
+    user_role   = models.ForeignKey(UserRole,   on_delete=models.CASCADE, related_name='user_role', blank=True, null=True)
     location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='user_locations')
 
     objects = CustomUserManager()
@@ -133,6 +142,7 @@ class Ticket(models.Model):
     status      = models.ForeignKey(Status,   on_delete=models.CASCADE, related_name='tickt_status', default="6")
     tag         = models.ForeignKey(Tag,   on_delete=models.CASCADE, related_name='tickt_tag',  blank=True, null=True)
     department  = models.ForeignKey(Department,   on_delete=models.CASCADE, related_name='tickt_department', blank=True, null=True)
+    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='assigend_to',  blank=True, null=True)
 
 
     @staticmethod
@@ -141,10 +151,8 @@ class Ticket(models.Model):
         Returns a dictionary with the count of tickets for each status.
         """
         status_counts = Ticket.objects.values('status__status').annotate(count=Count('status'))
-
         # Convert the queryset result to a dictionary for easy access
         status_count_dict = {item['status__status']: item['count'] for item in status_counts}
-
         return status_count_dict
 
     def __str__(self):
@@ -168,3 +176,5 @@ class Comment(models.Model):
 
     def __str__(self):
         return "%s" % (self.ticket.id)
+    
+

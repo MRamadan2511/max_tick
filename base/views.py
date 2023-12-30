@@ -1,24 +1,46 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
 
 
 from .forms import AgentLoginForm, CourierLoginForm, TicketForm, CommentForm, UpdateLocationForm, UpdateStatusForm
-from .models import Ticket, Comment
+from .models import Ticket, Comment, User
+from .decorators import user_role_required
 
 
+
+@login_required
+def inbox(request):
+# View for tickets created by each user
+    tickets =  Ticket.objects.filter(user=request.user) | Ticket.objects.filter(assigned_to=request.user)
+    ####
+    # To Do: need add filter by status here if ticket closed remove from user view
+    ####
+
+    return render(request, 'base/inbox.html', context={"tickets":tickets, })
+
+
+@login_required
+@user_role_required(allowed_roles=['admin',])
 def home(request):
-    ticket = Ticket.objects.all()
-    all_ticket = ticket.count()
-    all_status_counts = Ticket.get_status_counts()
+
+    user_location = request.user.location
+
+    # Filter tickets based on the user's location
+    ticket = Ticket.objects.filter(location=user_location)
+
+    # Get ticket count for the filtered tickets
+    all_ticket = ticket.count()   
+
     # Filter tickets for open status
-    open_tickets_count = all_status_counts.get('Open', 0)
-    closed_tickets_count = all_status_counts.get('Closed', 0)
-    overdue_tickets_count = all_status_counts.get('Overdue', 0)
-    waiting_tickets_count = all_status_counts.get('Waiting', 0)
-    inprogress_tickets_count = all_status_counts.get('In Progress', 0)
-    new_tickets_count = all_status_counts.get('New', 0)
+    open_tickets_count          = ticket.filter(status__status='Open').count()
+    closed_tickets_count        = ticket.filter(status__status='Closed').count()
+    overdue_tickets_count       =  ticket.filter(status__status='Overdue').count()
+    waiting_tickets_count       =  ticket.filter(status__status='Waiting').count() 
+    inprogress_tickets_count    =  ticket.filter(status__status='In Progress').count()
+    new_tickets_count           =  ticket.filter(status__status='New').count() 
 
     return render(request, 'base/home.html', context={"ticket":ticket, 
                                                       "open_tickets_count":open_tickets_count,
@@ -31,6 +53,36 @@ def home(request):
                                                       },)
 
 
+@login_required
+@user_role_required(allowed_roles=['admin',])
+def dashboard(request):
+    ticket = Ticket.objects.all()
+
+    all_ticket = ticket.count()
+    all_status_counts = Ticket.get_status_counts()
+
+    # Filter tickets for open status
+    open_tickets_count          = all_status_counts.get('Open', 0)
+    closed_tickets_count        = all_status_counts.get('Closed', 0)
+    overdue_tickets_count       = all_status_counts.get('Overdue', 0)
+    waiting_tickets_count       = all_status_counts.get('Waiting', 0)
+    inprogress_tickets_count    = all_status_counts.get('In Progress', 0)
+    new_tickets_count           = all_status_counts.get('New', 0)
+
+    return render(request, 'base/dashboard.html', context={"ticket":ticket, 
+                                                      "open_tickets_count":open_tickets_count,
+                                                      "closed_tickets_count":closed_tickets_count,
+                                                      "overdue_tickets_count":overdue_tickets_count,
+                                                      "waiting_tickets_count":waiting_tickets_count,
+                                                      "inprogress_tickets_count":inprogress_tickets_count,
+                                                      "new_tickets_count":new_tickets_count,
+                                                      "all_ticket":all_ticket,
+                                                      },)
+
+
+
+@login_required
+# @user_role_required(allowed_roles=['admin', 'editor'])
 def ticket_create(request):
     if request.method == 'POST':
         form = TicketForm(request.POST, request.FILES)
@@ -46,16 +98,10 @@ def ticket_create(request):
     return render(request, 'base/ticket_create.html', {'form': form})
 
 
-# def ticket_detail(request, pk):
-#     ticket = get_object_or_404(Ticket, pk=pk)
-
-#     comments = ticket.comment_set.all()
-#     comment_form = CommentForm()
-
-#     return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments, 'comment_form': comment_form})
-
-
+@login_required
+# @user_role_required(allowed_roles=['admin', 'editor'])
 def ticket_detail(request, pk):
+    print(request.user.user_type.type)
     ticket = get_object_or_404(Ticket, pk=pk)
     comments = ticket.comment_set.all()
 
@@ -81,7 +127,7 @@ def ticket_detail(request, pk):
                                                        'comment_form': comment_form,
                                                          'location_form': location_form,
                                                          'status_form':status_form})
-
+@login_required
 def add_comment(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
 
