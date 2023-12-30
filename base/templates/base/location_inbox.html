@@ -4,6 +4,13 @@
 {% block  content %}
 {% comment %}  {% endcomment %}
 <style>
+    
+  
+    
+    
+  </style>
+  
+  <style>
     .summary.shadow {
       box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     }
@@ -21,12 +28,7 @@
         font-size: 1.5rem;
         font-weight: bold;
       }
-  
-    
-    
-  </style>
-  
-  <style>
+
     .card {
       background-color: #e9ecef;
       margin-bottom: 10px;
@@ -77,7 +79,7 @@
       <div class="card-body">
         <h5 class="card-title"><i class="fa-sharp fa-solid fa-envelope-circle-check fa-lg" style="color: #ffffff;"></i> Closed Tickets</h5>
         {% comment %} <p class="card-text text-center"> {{ closed_count }} </p> {% endcomment %}
-        <p class="card-text text-center"> {{closed_tickets_count}} </p>
+        <p class="card-text text-center"> {{closed_count}} </p>
       </div>
     </div>
     <!-- In progress Tickets-->
@@ -85,7 +87,7 @@
       <div class="card-body">
         <h5 class="card-title"><i class="fa-solid fa-spinner fa-spin-pulse fa-lg" style="color: #ffffff;"></i> In-Progress Tickets</h5>
         {% comment %} <p class="card-text text-center"> {{ inprogress_count }} </p> {% endcomment %}
-        <p class="card-text text-center"> {{inprogress_tickets_count}} </p>
+        <p class="card-text text-center"> {{inprogress_count}} </p>
       </div>
     </div>
     <!-- Waiting Tickets-->
@@ -93,7 +95,7 @@
       <div class="card-body">
         <h5 class="card-title"><i class="fa-solid fa-circle-pause fa-beat-fade fa-lg" style="color: #ffffff;"></i>  Waiting Tickets</h5>
         {% comment %} <p class="card-text text-center"> {{ waiting_count }} </p> {% endcomment %}
-        <p class="card-text text-center"> {{waiting_tickets_count}} </p>
+        <p class="card-text text-center"> {{waiting_count}} </p>
       </div>
     </div>
     <!-- Open Tickets-->
@@ -101,7 +103,7 @@
       <div class="card-body">
         <h5 class="card-title"><i class="fa-solid fa-envelope-open-text fa-shake fa-lg" style="color: #e1e9ea;"></i> Opened Tickets</h5>
         {% comment %} <p class="card-text text-center"> {{ open_count }} </p> {% endcomment %}
-        <p class="card-text text-center"> {{open_tickets_count}} </p>
+        <p class="card-text text-center"> {{open_count}} </p>
       </div>
     </div>
     <!-- overdue Tickets-->
@@ -109,7 +111,7 @@
       <div class="card-body">
         <h5 class="card-title"><i class="fa-solid fa-triangle-exclamation fa-beat-fade fa-lg" style="color: #ffffff;"></i> Overdue Tickets</h5>
         {% comment %} <p class="card-text text-center"> {{ overdue_count }} </p> {% endcomment %}
-        <p class="card-text text-center"> {{overdue_tickets_count}} </p>
+        <p class="card-text text-center"> {{overdue_count}} </p>
       </div>
     </div>
   </div>

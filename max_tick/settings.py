@@ -44,16 +44,28 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     'bootstrap5',
-    'ckeditor_uploader',
     'ckeditor',
 ]
 
 CKEDITOR_UPLOAD_PATH = "image/"
 CKEDITOR_CONFIGS = {
     'default': {
-        'removePlugins': 'uploadimage,image',  # Remove the plugins related to file/image upload
+        'removePlugins': 'uploadimage,image,exportpdf',  # Remove the plugins related to file/image upload
+        # 'skin': 'moono',
+        # 'width':'1100',
+        # 'languages':'rtl',
+
     },
+  
 }
+
+
+
+
+
+#https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_lang.html#property-rtl
+
+
 # CKEDITOR_BASEPATH = "/staticfiles/ckeditor/ckeditor/"
 
 

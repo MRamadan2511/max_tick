@@ -28,8 +28,8 @@
               </div>
           </div>
 
-          <div class="card-body">
-            <p class="card-text">{{ ticket.description }}</p>
+          <div class="card-body text-end">
+            <p class="card-text ">{{ ticket.description | safe}}</p>
             {% if ticket.post_image %}
               <img src="{{ ticket.post_image.url }}" class="img-fluid" alt="Ticket Image">
             {% endif %}

@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from .models import User, UserType, Ticket, Comment
 
 from ckeditor.widgets import CKEditorWidget
+from ckeditor.fields import RichTextField
+
 
 
 
@@ -14,7 +16,17 @@ class TicketForm(forms.ModelForm):
         model = Ticket
         fields = ['order_id', 'description', 'post_image',]
 
+        labels = {
+            'order_id': 'Order ID',
+            'description': '',
 
+        }
+
+        widgets = {
+                'description': CKEditorWidget(),
+
+            }
+   
 
 class AgentLoginForm(AuthenticationForm):
     def clean(self):
@@ -96,3 +108,17 @@ class UpdateStatusForm(forms.ModelForm):
             'status': '',
 
         }
+
+
+class DateForm(forms.Form):
+    start = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label='')
+    end = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label='')
+
+
+    reset = forms.BooleanField(
+        widget=forms.HiddenInput(),
+        required=False,
+        initial=True,
+    )
+
+  
