@@ -124,6 +124,9 @@ def add_comment(request, pk):
 
 
 def login(request):
+    if request.user.is_authenticated:
+        print(request.user)
+        return redirect('user_inbox') 
 
     return render(request, 'base/login.html',)
 
@@ -138,7 +141,7 @@ class AgentLoginView(LoginView):
         if self.request.user.is_authenticated:
             return redirect(self.get_success_url())
 
-        return super().dispatch(request, *args, **kwargs, agent_login_form=self.authentication_form())
+        return super().dispatch(request, *args, **kwargs)
 
     
 
@@ -153,7 +156,7 @@ class CourierLoginView(LoginView):
         if self.request.user.is_authenticated:
             return redirect(self.get_success_url())
 
-        return super().dispatch(request, *args, **kwargs, courier_login_form=self.authentication_form())
+        return super().dispatch(request, *args, **kwargs)
 
 
 
