@@ -143,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LOGIN_URL = '/courier_login/'  # Change this to the URL of your login page
+LOGIN_URL = '/login/'  # Change this to the URL of your login page
 
 
 # Internationalization

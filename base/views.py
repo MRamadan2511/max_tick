@@ -17,7 +17,7 @@ from .decorators import user_role_required
 
 @login_required
 def user_inbox(request):
-# View for tickets created by each user
+# View for tickets created or assigend on each user
     tickets =  Ticket.objects.filter(user=request.user) | Ticket.objects.filter(assigned_to=request.user)
     ####
     # To Do: need add filter by status here if ticket closed remove from user view
@@ -123,20 +123,37 @@ def add_comment(request, pk):
 
 
 
+def login(request):
+
+    return render(request, 'base/login.html',)
 
 class AgentLoginView(LoginView):
     template_name = 'base/agent_login.html'
     authentication_form = AgentLoginForm
 
     def get_success_url(self):
-        return reverse_lazy('home') 
+        return reverse_lazy('user_inbox') 
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect(self.get_success_url())
+
+        return super().dispatch(request, *args, **kwargs, agent_login_form=self.authentication_form())
+
+    
 
 class CourierLoginView(LoginView):
     template_name = 'base/courier_login.html'
     authentication_form = CourierLoginForm
 
     def get_success_url(self):
-        return reverse_lazy('home')
+        return reverse_lazy('user_inbox')
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect(self.get_success_url())
+
+        return super().dispatch(request, *args, **kwargs, courier_login_form=self.authentication_form())
 
 
 

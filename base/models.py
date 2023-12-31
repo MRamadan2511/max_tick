@@ -89,7 +89,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     company     = models.ForeignKey(Company,   on_delete=models.CASCADE, related_name='user_company')
     user_type   = models.ForeignKey(UserType,   on_delete=models.CASCADE, related_name='user_type')
     user_role   = models.ForeignKey(UserRole,   on_delete=models.CASCADE, related_name='user_role', blank=True, null=True)
-    location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='user_locations')
+    location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='user_locations',blank=True, null=True)
 
     objects = CustomUserManager()
 

@@ -34,7 +34,7 @@ class AgentLoginForm(AuthenticationForm):
         username = cleaned_data.get('username')
 
         try:
-            agent_type = UserType.objects.get(type='Agent')
+            agent_type = UserType.objects.get(type='agent')
             user = User.objects.get(email=username, user_type=agent_type)
             if not user.is_active or not user.is_staff:
                 raise ValidationError("Invalid agent credentials")

@@ -19,7 +19,9 @@
 
 </head>
 <body>
+{% if request.user.is_authenticated %}
   {% include 'base/nav.html' %}
+{% endif %}
   {% if messages %}
         
                 <div class="alert alert-dismissible fade show" role="alert">
