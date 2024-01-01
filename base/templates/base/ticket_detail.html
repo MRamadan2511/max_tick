@@ -4,6 +4,17 @@
 {% load crispy_forms_tags %}
 
 
+
+<style>
+  .card {
+      {% comment %} margin: 20px auto; {% endcomment %}
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 5px;
+  }
+</style>
+
 <div class="container mt-5">
 
   <div class="row">
@@ -49,7 +60,7 @@
 
       
       {% if request.user.user_type.type == "agent" %}
-      <div class="col-md-3">   
+      <div class="col-md-3 card">   
         <ul class="list-group">
 
                   {% comment %}    Location Start     {% endcomment %}
@@ -60,7 +71,7 @@
             <form method="post" style="display: flex; align-items: center;">
               {% csrf_token %}
               {{ location_form|crispy }}
-              <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="location-submit" class="btn btn-sm btn-primary ">Update</button>
+              <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="location-submit" class="btn btn-sm btn-outline-primary ">Update</button>
           </form>
           {% else %}
           <span class="badge bg-secondary rounded-pill"> {{ ticket.location }}</span>
@@ -76,7 +87,7 @@
             <form method="post" style="display: flex; align-items: center;">
               {% csrf_token %}
               {{ status_form|crispy }}
-              <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="status-submit" class="btn btn-sm btn-primary ">Update</button>
+              <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="status-submit" class="btn btn-sm btn-outline-primary ">Update</button>
           </form>
           {% else %}
           <span class="badge bg-secondary rounded-pill"> {{ ticket.status }}</span>

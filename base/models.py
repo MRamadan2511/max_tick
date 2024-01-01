@@ -135,14 +135,23 @@ class Ticket(models.Model):
     order_id    = models.CharField(max_length=15)
     description = models.TextField('Description', blank=True, null=True)
     post_image  = models.ImageField(upload_to='image/post' ,blank=True, null=True,)
-    created_at  = models.DateTimeField(auto_now_add=True)
-    updated_at  = models.DateTimeField(auto_now=True)
     location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='ticket_locations')
     user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_ticket')
     status      = models.ForeignKey(Status,   on_delete=models.CASCADE, related_name='tickt_status', default="6")
     tag         = models.ForeignKey(Tag,   on_delete=models.CASCADE, related_name='tickt_tag',  blank=True, null=True)
     department  = models.ForeignKey(Department,   on_delete=models.CASCADE, related_name='tickt_department', blank=True, null=True)
     assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='assigend_to',  blank=True, null=True)
+    created_at  = models.DateTimeField(default=timezone.now)
+    updated_at  = models.DateTimeField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        '''
+            Function to set time zone for created at and updated at
+        '''
+        self.updated_at = timezone.now()
+        if not self.created_at:
+            self.created_at = self.updated_at
+        return super().save(*args, **kwargs)
 
 
     @staticmethod
