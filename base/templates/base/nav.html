@@ -4,13 +4,14 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <a class="navbar-brand" href="{% url 'home'%}">  Tick</a>
+        <a class="navbar-brand" href="{% url 'user_inbox'%}">  Tick</a>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if request.user.user_type.type == "Courier" %}
           {% else %}
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/home/' %}active{% endif %}" aria-current="page" href="{% url 'home'%}"><i class="fas fa-home"></i> Home</a>
           </li>
+
           {% endif %}
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'user_inbox'%}"><i class="fa-solid fa-envelope-open-text fa-lg" ></i> My Inbox</a>
@@ -18,6 +19,12 @@
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/ticket_create/' %}active{% endif %}" href="{% url 'ticket_create'%}"><i class="fa-solid fa-pen-to-square"></i> New Ticket</a>
           </li>
+          {% if request.user.user_type.type == "Courier" %}
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard'%}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+          </li>
+          {% endif %}
         </ul>
         <div class="d-flex">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
