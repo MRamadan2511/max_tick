@@ -1,0 +1,89 @@
+{% load crispy_forms_tags %}
+
+
+<ul class="list-group">
+                  {% comment %}    Location Start     {% endcomment %}
+    <li class="list-group-item justify-content-between align-items-center list-group-item-light">
+        Location:
+
+        {% if user_role == 'admin' %}
+        
+            <form method="post" style="display: flex; align-items: center;">
+                {% csrf_token %}
+                {{ location_form|crispy }}
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="location-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+            </form>
+        {% else %}
+            <span class="badge bg-secondary rounded-pill"> {{ ticket.location }}</span>
+        {% endif %}
+    </li>
+    {% comment %}    Location End     {% endcomment %}
+
+    {% comment %}    Status Start     {% endcomment %}
+    <li class="list-group-item justify-content-between align-items-center list-group-item-dark">
+        Status:
+        {% if user_role == 'admin' %}
+            <form method="post" style="display: flex; align-items: center;">
+                {% csrf_token %}
+                {{ status_form|crispy }}
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="status-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+            </form>
+        {% else %}
+                <span class="badge bg-secondary rounded-pill"> {{ ticket.status }}</span>
+        {% endif %}
+    </li>
+    {% comment %}    Status End     {% endcomment %}
+
+    {% comment %}    Tag Start     {% endcomment %}
+    <li class="list-group-item  justify-content-between align-items-center list-group-item-light">
+        Tag:
+        {% if user_role == 'admin' %}
+            <form method="post" style="display: flex; align-items: center;">
+                {% csrf_token %}
+                {{ tag_form|crispy }}
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="tag-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+            </form>
+        {% else %}
+        <span class="badge bg-info rounded-pill"> {{ ticket.tag }}</span>
+        {% endif %}
+    </li>
+    {% comment %}    Tag End     {% endcomment %}
+
+    {% comment %}    Department Start     {% endcomment %}
+    <li class="list-group-item  justify-content-between align-items-center list-group-item-dark">
+        Department:
+        {% if user_role == 'admin' %}
+            <form method="post" style="display: flex; align-items: center;">
+                {% csrf_token %}
+                {{ department_form|crispy }}
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="department-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+            </form>
+        {% else %}
+        <span class="badge bg-primary rounded-pill"> {{ ticket.department }} </span>
+        {% endif %}
+    </li>
+    {% comment %}    Department End     {% endcomment %}
+
+    {% comment %}    Assigned Start     {% endcomment %}
+    <li class="list-group-item  justify-content-between align-items-center list-group-item-light">
+        Assigned To:
+        {% if user_role == 'admin' %}
+            <form method="post" style="display: flex; align-items: center;">
+                {% csrf_token %}
+                {{ assigned_to_form|crispy }}
+                
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="assigned-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+            </form>
+        {% else %}
+        <span class="badge bg-info rounded-pill"> {{ assigned_to.tag }}</span>
+        {% endif %}
+    </li>
+    
+
+    {% comment %}    Assigned End     {% endcomment %}
+</ul>
+
+<script>
+    $("#id_assigned_to").select2()
+    {% comment %} $("#id_assigned_to").select2() {% endcomment %}
+</script>

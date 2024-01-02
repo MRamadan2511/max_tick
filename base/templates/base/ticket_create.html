@@ -2,12 +2,31 @@
 
 {% block content %}
 {% load crispy_forms_tags %}
-<h2>Create Ticket</h2>
+
+
+
+<div class="row">
+  <div class="col-md-8">
+
+ 
+{% if request.user.user_type.type == "Courier" %}
+  <h2 class="text-center pt-2">أضف موضوع جديد</h2>
+{% else %}
+  <h2 class="text-center pt-2">Create Ticket</h2>
+{% endif %}
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.media }}
     {{ form|crispy }}
-    <button type="submit" class="btn btn-primary form-control">Create</button>
+    <button type="submit" class="btn btn-primary form-control">
+      {% if request.user.user_type.type == "Courier" %}
+      إضافة
+      {% else %}
+      Create
+      {% endif %}
+    </button>
   </form>
+</div>
+</div>
 {% endblock %}
 

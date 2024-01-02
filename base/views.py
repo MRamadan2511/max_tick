@@ -9,7 +9,10 @@ from django.db.models import Count
 import plotly.express as px
 from datetime import datetime, timedelta
 
-from .forms import AgentLoginForm, CourierLoginForm, TicketForm, CommentForm, UpdateLocationForm, UpdateStatusForm, DateForm
+from .forms import (AgentLoginForm, CourierLoginForm,TicketForm, 
+                    CommentForm, UpdateLocationForm, UpdateStatusForm,
+                    UpdateDepartmentForm, UpdateTagForm, DateForm,
+                    UpdateAssignedToForm)
 from .models import Ticket, Comment, User
 from .decorators import user_role_required
 
@@ -54,8 +57,12 @@ def location_inbox(request):
 @login_required
 # @user_role_required(allowed_roles=['admin', 'editor'])
 def ticket_create(request):
+
+    # get user type for the form to change failed lable names if user is courier
+    user_type = request.user.user_type.type if request.user.is_authenticated else None
+
     if request.method == 'POST':
-        form = TicketForm(request.POST, request.FILES)
+        form = TicketForm(request.POST, request.FILES, user_type=user_type)
         if form.is_valid():
             ticket = form.save(commit=False)
             ticket.user = request.user  # Assuming you have user authentication in place
@@ -63,40 +70,64 @@ def ticket_create(request):
             ticket.save()
             return redirect('ticket_detail', pk=ticket.pk)  # Redirect to ticket detail page
     else:
-        form = TicketForm()
+        form = TicketForm(user_type=user_type)
 
     return render(request, 'base/ticket_create.html', {'form': form})
 
 
 @login_required
-# @user_role_required(allowed_roles=['admin', 'editor'])
 def ticket_detail(request, pk):
-    print(request.user.user_type.type)
     ticket = get_object_or_404(Ticket, pk=pk)
     comments = ticket.comment_set.all()
+    user_role = request.user.user_role.role
 
     if request.method == 'POST':
         location_form = UpdateLocationForm(request.POST, instance=ticket)
         status_form = UpdateStatusForm(request.POST, instance=ticket)
-    
+        tag_form = UpdateTagForm(request.POST, instance=ticket)
+        department_form = UpdateDepartmentForm(request.POST, instance=ticket)
+        assigned_to_form = UpdateAssignedToForm(request.POST, instance=ticket)
+       
+
         if 'location-submit' in request.POST and location_form.is_valid():
             location_form.save()
             messages.success(request, "Location Updated Successfully")
             return redirect('ticket_detail', pk=pk)
-        else:
-            'status-submit' in request.POST and status_form.is_valid()
+        
+        elif 'status-submit' in request.POST and status_form.is_valid():
             status_form.save()
             messages.success(request, "Status Updated Successfully")
             return redirect('ticket_detail', pk=pk)
+        
+        elif 'assigned-submit' in request.POST and assigned_to_form.is_valid():
+            assigned_to_form.save()
+            messages.success(request, "Assigned To Updated Successfully")
+            return redirect('ticket_detail', pk=pk)
+        
+        elif 'department-submit' in request.POST and department_form.is_valid():
+            department_form.save()
+            messages.success(request, "Department Updated Successfully")
+            return redirect('ticket_detail', pk=pk)
+
+        else:
+            'tag-submit' in request.POST and tag_form.is_valid()
+            tag_form.save()
+            messages.success(request, "Tag Updated Successfully")
+            return redirect('ticket_detail', pk=pk)
     else:
         comment_form = CommentForm()
-        location_form = UpdateLocationForm(instance=ticket)
+        location_form = UpdateLocationForm(instance=ticket, )
         status_form = UpdateStatusForm(instance=ticket)
+        tag_form = UpdateTagForm(instance=ticket)
+        department_form = UpdateDepartmentForm(instance=ticket)
+        assigned_to_form = UpdateAssignedToForm(instance=ticket)
 
-    return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments, 
-                                                       'comment_form': comment_form,
-                                                         'location_form': location_form,
-                                                         'status_form':status_form})
+    return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments,'user_role':user_role,
+                                                       'comment_form': comment_form,'department_form':department_form,
+                                                         'location_form': location_form,'tag_form':tag_form,
+                                                         'status_form':status_form,'assigned_to_form':assigned_to_form})
+
+
 @login_required
 def add_comment(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
@@ -119,44 +150,6 @@ def add_comment(request, pk):
         form = CommentForm()
         
     return render(request, 'base/ticket_detail.html', {'form': form, 'ticket': ticket, })
-
-
-
-
-def login(request):
-    if request.user.is_authenticated:
-        print(request.user)
-        return redirect('user_inbox') 
-
-    return render(request, 'base/login.html',)
-
-class AgentLoginView(LoginView):
-    template_name = 'base/agent_login.html'
-    authentication_form = AgentLoginForm
-
-    def get_success_url(self):
-        return reverse_lazy('user_inbox') 
-    
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            return redirect(self.get_success_url())
-
-        return super().dispatch(request, *args, **kwargs)
-
-    
-
-class CourierLoginView(LoginView):
-    template_name = 'base/courier_login.html'
-    authentication_form = CourierLoginForm
-
-    def get_success_url(self):
-        return reverse_lazy('user_inbox')
-    
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            return redirect(self.get_success_url())
-
-        return super().dispatch(request, *args, **kwargs)
 
 
 
@@ -213,3 +206,44 @@ def dashboard(request):
     return render(request, 'base/chart.html', 
                   context= {'location_chart': location_chart,  'status_chart': status_chart,
                             'form': DateForm(initial={'start': start, 'end': end})})
+
+
+
+
+
+def login(request):
+    if request.user.is_authenticated:
+        return redirect('user_inbox') 
+
+    return render(request, 'base/login.html',)
+
+
+
+class AgentLoginView(LoginView):
+    template_name = 'base/agent_login.html'
+    authentication_form = AgentLoginForm
+
+    def get_success_url(self):
+        return reverse_lazy('user_inbox') 
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect(self.get_success_url())
+
+        return super().dispatch(request, *args, **kwargs)
+
+    
+
+class CourierLoginView(LoginView):
+    template_name = 'base/courier_login.html'
+    authentication_form = CourierLoginForm
+
+    def get_success_url(self):
+        return reverse_lazy('user_inbox')
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect(self.get_success_url())
+
+        return super().dispatch(request, *args, **kwargs)
+

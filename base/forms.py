@@ -12,12 +12,19 @@ from ckeditor.fields import RichTextField
 
 
 class TicketForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user_type = kwargs.pop('user_type', None)
+        super(TicketForm, self).__init__(*args, **kwargs)
+        if user_type == 'Courier':
+            self.fields['order_id'].label = 'رقم الاوردر'
+            self.fields['post_image'].label = 'أضف صورة'
+
     class Meta:
         model = Ticket
         fields = ['order_id', 'description', 'post_image',]
 
         labels = {
-            'order_id': 'Order ID',
+            # 'order_id': 'Order ID',
             'description': '',
 
         }
@@ -83,6 +90,7 @@ class CommentForm(forms.ModelForm):
 
 
 class UpdateLocationForm(forms.ModelForm):
+    
     class Meta:
         model = Ticket
         fields = ['location']
@@ -108,6 +116,50 @@ class UpdateStatusForm(forms.ModelForm):
             'status': '',
 
         }
+
+class UpdateTagForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['tag']
+
+
+        widgets = {
+                'tag': forms.Select(attrs={'class': 'form-control'}),
+                    }
+        labels = {
+            'tag': '',
+
+        }
+class UpdateDepartmentForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['department']
+
+
+        widgets = {
+                'department': forms.Select(attrs={'class': 'form-control'}),
+                    }
+        labels = {
+            'department': '',
+
+        }
+
+
+class UpdateAssignedToForm(forms.ModelForm):
+    
+    class Meta:
+        model = Ticket
+        fields = ['assigned_to']
+
+
+        widgets = {
+                'assigned_to': forms.Select(attrs={'class': 'form-control'}),
+                    }
+        labels = {
+            'assigned_to': '',
+
+        }
+
 
 
 class DateForm(forms.Form):

@@ -2,14 +2,25 @@
 
 <p class=" text-center">
     <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        {% if request.user.user_type.type == "Courier" %}
+        أضف تعليق جديد
+        {% else %}
         Add New Comment
+        {% endif %}
     </a>
     <div class="collapse" id="collapseExample">
         <form  class="" method="post" style="margin-top: 1.3em;" enctype="multipart/form-data" action="{% url 'add_comment' pk=ticket.pk %}">
             {% csrf_token %}
             {{ comment_form.media }}
             {{ comment_form | crispy}} 
-            <button type="submit" class="btn btn-success form-control" name='add_comment'>Submit</button>
+            <button type="submit" class="btn btn-success form-control" name='add_comment'>
+                {% if request.user.user_type.type == "Courier" %}
+                أضف
+                {% else %}
+                    Submit
+                {% endif %}
+                
+            </button>
         </form>
       </div>
     
