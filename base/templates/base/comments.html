@@ -65,25 +65,11 @@
     </div>
     {% endfor %}
 {% else %}
-<h2 class="text-center pt-3">No Comments ...</h2>
+
+    {% if request.user.user_type.type == "Courier" %}
+    <h2 class="text-center pt-3">....لا يوجد اى تعليقات</h2>
+    {% else %}
+      <h2 class="text-center pt-3">No Comments ...</h2>
+    {% endif %}
 {% endif %}
-{% comment %} 
-  <div class="card-body">
-    <div class="comments" >
-      {% for comment in comments %}
-      <div class="text-end">
-        <span class="text-end font-weight-normal" >
-            {% if comment.user == user %}
-                <small class="text-muted">You Added Comment @ {{ comment.created }}</small>
-            {% else %}
-                 <small class="text-muted">{{ comment.user }}  Added Comment  @ {{ comment.created }}</small>
-          </span>
-            {% endif %}
-        <p class="text-end pt-3 ">
-          {{ comment.comment |safe }}
-        </p>
-        
-        <hr style="height:5px; border: 1px;  background-color:Silver">
-        
-      </div>
-      {% endfor %} {% endcomment %}
+<hr>

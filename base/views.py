@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.db import models
+from django.db import models,connection
 from django.db.models import Count
 
 import plotly.express as px
@@ -13,7 +13,7 @@ from .forms import (AgentLoginForm, CourierLoginForm,TicketForm,
                     CommentForm, UpdateLocationForm, UpdateStatusForm,
                     UpdateDepartmentForm, UpdateTagForm, DateForm,
                     UpdateAssignedToForm)
-from .models import Ticket, Comment, User
+from .models import Ticket, Comment, User, Location, Status
 from .decorators import user_role_required
 
 
@@ -203,9 +203,32 @@ def dashboard(request):
     # Chart for Status
     status_chart = generate_pie_chart(tickets, 'status__status', 'Ticket Status')
 
+
+    ## ## Ticket / warehouse ### ####
+    unique_locations = Location.objects.all()
+    unique_status = Status.objects.all()    
+
+    # If using PostgreSQL, you might need to apply distinct to the entire queryset
+    if 'postgresql' in connection.vendor:
+        # unique_locations = unique_locations.distinct()
+        unique_locations = unique_locations.order_by('name').distinct()
+        unique_status = unique_status.order_by('status').distinct()
+
+       
+    status_counts = Ticket.objects.values('location__name', 'status__status').annotate(count=Count('id'))
+
+    status_counts_dict = {}
+    for count in status_counts:
+        location_name = count['location__name']
+        status_name = count['status__status']
+        status_counts_dict.setdefault(location_name, {})[status_name] = count['count']
+        ## ## End Ticket / warehouse ### ####
+
     return render(request, 'base/chart.html', 
                   context= {'location_chart': location_chart,  'status_chart': status_chart,
-                            'form': DateForm(initial={'start': start, 'end': end})})
+                            'form': DateForm(initial={'start': start, 'end': end}),'status_counts':status_counts,
+                            'unique_locations':unique_locations,'unique_status':unique_status,
+                            'status_counts_dict':status_counts_dict,})
 
 
 

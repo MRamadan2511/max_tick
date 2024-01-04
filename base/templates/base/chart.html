@@ -59,8 +59,40 @@
         {{ status_chart|safe }} 
     </div>
 </div>
-{% endblock content %}
+<hr>
 
 
 
+<h2 class="card-header mt-3 text-center">Tickets per Warehouse</h2>
 
+<table class="table table-responsive table-striped table-hover text-center">
+
+    <thead class="table-dark">
+        <tr class ="text-center">
+            <th scope="col">WareHouse</th>
+            {% for stat in unique_status %}
+            <th scope="col"> {{stat.status}} </th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for location in unique_locations %}
+            <tr>
+                <td>{{ location.name }}</td>
+                {% for status in unique_status %}
+                    <td>
+                        {% for count in status_counts %}
+                            {% if count.location__name == location.name and count.status__status == status.status %}
+                                {{ count.count }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+ 
+{% endblock %}
