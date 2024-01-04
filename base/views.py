@@ -13,7 +13,7 @@ from .forms import (AgentLoginForm, CourierLoginForm,TicketForm,
                     CommentForm, UpdateLocationForm, UpdateStatusForm,
                     UpdateDepartmentForm, UpdateTagForm, DateForm,
                     UpdateAssignedToForm)
-from .models import Ticket, Comment, User, Location, Status
+from .models import Ticket, Comment, User, Location, Status,TicketLog
 from .decorators import user_role_required
 
 
@@ -79,6 +79,7 @@ def ticket_create(request):
 def ticket_detail(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
     comments = ticket.comment_set.all()
+    logs = TicketLog.objects.filter(ticket=ticket)
     user_role = request.user.user_role.role
 
     if request.method == 'POST':
@@ -88,23 +89,34 @@ def ticket_detail(request, pk):
         department_form = UpdateDepartmentForm(request.POST, instance=ticket)
         assigned_to_form = UpdateAssignedToForm(request.POST, instance=ticket)
        
-
+        print(ticket.location)
         if 'location-submit' in request.POST and location_form.is_valid():
-            location_form.save()
-            messages.success(request, "Location Updated Successfully")
+            ticket = get_object_or_404(Ticket, pk=pk)
+            new_location = location_form.cleaned_data['location']
+            print(new_location)
+            print(ticket.location)
+            if ticket.location != new_location:    
+                ticket.log_update(user=request.user, message=f"Location updated by {request.user}")
+                location_form.save()            
+                messages.success(request, "Location Updated Successfully")
+            else:
+                messages.error(request, "Location is the same, no update")
             return redirect('ticket_detail', pk=pk)
         
         elif 'status-submit' in request.POST and status_form.is_valid():
+            ticket.log_update(user=request.user, message=f"Status updated by {request.user}")
             status_form.save()
             messages.success(request, "Status Updated Successfully")
             return redirect('ticket_detail', pk=pk)
         
         elif 'assigned-submit' in request.POST and assigned_to_form.is_valid():
+            ticket.log_update(user=request.user, message=f"Assigned to updated by {request.user}")
             assigned_to_form.save()
             messages.success(request, "Assigned To Updated Successfully")
             return redirect('ticket_detail', pk=pk)
         
         elif 'department-submit' in request.POST and department_form.is_valid():
+            ticket.log_update(user=request.user, message=f"Department updated by {request.user}")
             department_form.save()
             messages.success(request, "Department Updated Successfully")
             return redirect('ticket_detail', pk=pk)
@@ -124,7 +136,7 @@ def ticket_detail(request, pk):
 
     return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments,'user_role':user_role,
                                                        'comment_form': comment_form,'department_form':department_form,
-                                                         'location_form': location_form,'tag_form':tag_form,
+                                                         'location_form': location_form,'tag_form':tag_form,'logs':logs,
                                                          'status_form':status_form,'assigned_to_form':assigned_to_form})
 
 

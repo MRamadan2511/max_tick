@@ -129,6 +129,11 @@ class Tag(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+
+
+
+
     
 
 class Ticket(models.Model):
@@ -170,10 +175,11 @@ class Ticket(models.Model):
     class Meta:
         ordering = ['-updated_at', ]
 
+    def log_update(self, user, message):
+        TicketLog.objects.create(ticket=self, user=user, message=message)
 
 class Comment(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
-    # comment = models.TextField(blank=True, null=True,)
     comment = RichTextField(blank=False, null=False)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
@@ -186,4 +192,13 @@ class Comment(models.Model):
     def __str__(self):
         return "%s" % (self.ticket.id)
     
+
+class TicketLog(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    message = models.TextField()
+
+    def __str__(self):
+        return f"{self.message} At {self.timestamp}"
 

@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User, Company, UserType, Location, Department, Ticket, Tag, Status, Comment, UserRole
+from .models import (User, Company, UserType, TicketLog, 
+                     Location, Department, Ticket, Tag, Status, Comment, UserRole)
 
 admin.site.register(Company)
 admin.site.register(UserType)
@@ -12,6 +13,7 @@ admin.site.register(Department)
 admin.site.register(Status)
 admin.site.register(Comment)
 admin.site.register(UserRole)
+admin.site.register(TicketLog)
 
 
 

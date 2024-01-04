@@ -13,6 +13,10 @@
       padding: 10px;
       border-radius: 5px;
   }
+
+  .text-smaller {
+    font-size:11px ;
+}
 </style>
 
 <div class="container mt-5">
@@ -62,6 +66,15 @@
       {% if request.user.user_type.type == "agent" %}
       <div class="col-md-4 card">   
         {% include "base/ticket_side_bar.html" %}
+        <hr>
+        <div class="">
+          <p> Ticket Logs </p>
+          {% for log in logs %}
+          <span class="text-smaller" >
+              <p><small class="text-muted"> - {{log.message}} @ {{log.timestamp}} </small></p>
+            </span>
+             {% endfor %}
+        </div>
       </div>
       {% else %}
       {% endif %}
