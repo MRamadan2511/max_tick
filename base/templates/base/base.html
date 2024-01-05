@@ -26,8 +26,9 @@
 {% if request.user.is_authenticated %}
   {% include 'base/nav.html' %}
 {% endif %}
+<div id="messages-container">
+</div>   
   {% if messages %}
-            <div id="messages-container">
                 <div class="alert alert-dismissible fade show" role="alert">
                     {% for message in messages %}
                     {% if message.tags == 'error' %}
@@ -68,7 +69,7 @@
                 });
                 }, 9000); // 9000 milliseconds = 9 seconds
             </script>
-            {% endif %}        
+      {% endif %}        
 
     <div class="container">
         {% block content %}

@@ -84,9 +84,9 @@
 </ul>
 
 <script>
-    $("#id_assigned_to").select2()
+    $("#id_assigned_to").select2();
     {% comment %} $("#id_assigned_to").select2() {% endcomment %}
-     $("#update-location-form").submit(function(event) {
+    $("#update-location-form").submit(function(event) {
         event.preventDefault();
         
         $.ajax({
@@ -112,6 +112,7 @@
                 setTimeout(function() {
                     messagesContainer.find('.alert').alert('close');
                 }, 9000);
+
             },
             error: function() {
                 alert('An error occurred.');
