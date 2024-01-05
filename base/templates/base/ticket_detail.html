@@ -68,7 +68,7 @@
         {% include "base/ticket_side_bar.html" %}
         <hr>
         <div class="">
-          <p> Ticket Logs </p>
+          <p class="text-center"> Ticket Logs </p>
           {% for log in logs %}
           <span class="text-smaller" >
               <p><small class="text-muted"> - {{log.message}} @ {{log.timestamp}} </small></p>

@@ -8,7 +8,7 @@
 
         {% if user_role == 'admin' %}
         
-            <form method="post" style="display: flex; align-items: center;">
+            <form method="post" id="update-location-form" style="display: flex; align-items: center;">
                 {% csrf_token %}
                 {{ location_form|crispy }}
                 <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="location-submit" class="btn btn-sm btn-outline-primary ">Update</button>
@@ -86,4 +86,37 @@
 <script>
     $("#id_assigned_to").select2()
     {% comment %} $("#id_assigned_to").select2() {% endcomment %}
+     $("#update-location-form").submit(function(event) {
+        event.preventDefault();
+        
+        $.ajax({
+            type: 'POST',
+            url: '{% url "ticket_detail" pk=ticket.pk %}',
+            data: $(this).serialize(),
+            success: function(response) {
+                var messagesContainer = $("#messages-container");
+
+                if (response.status === 'success') {
+                    messagesContainer.html('<div class="alert alert-success alert-dismissible fade show" role="alert">'
+                        + response.message
+                        + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+                        + '</div>');
+                    // Optionally update other parts of the page if needed
+                } else {
+                    messagesContainer.html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                        + response.message
+                        + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+                        + '</div>');
+                }
+                // Hide the alert after 9 seconds
+                setTimeout(function() {
+                    messagesContainer.find('.alert').alert('close');
+                }, 9000);
+            },
+            error: function() {
+                alert('An error occurred.');
+            }
+        });
+    });
+
 </script>

@@ -5,6 +5,8 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db import models,connection
 from django.db.models import Count
+from django.http import JsonResponse
+
 
 import plotly.express as px
 from datetime import datetime, timedelta
@@ -89,19 +91,20 @@ def ticket_detail(request, pk):
         department_form = UpdateDepartmentForm(request.POST, instance=ticket)
         assigned_to_form = UpdateAssignedToForm(request.POST, instance=ticket)
        
-        print(ticket.location)
-        if 'location-submit' in request.POST and location_form.is_valid():
+
+        if location_form.is_valid():
             ticket = get_object_or_404(Ticket, pk=pk)
             new_location = location_form.cleaned_data['location']
-            print(new_location)
-            print(ticket.location)
-            if ticket.location != new_location:    
+
+            if ticket.location != new_location:
                 ticket.log_update(user=request.user, message=f"Location updated by {request.user}")
-                location_form.save()            
-                messages.success(request, "Location Updated Successfully")
+                location_form.save()
+                # messages.success(request, "Location Updated Successfully")
+                print("OKKK")
+                return JsonResponse({'status': 'success', 'message': 'Location Updated Successfully'})
             else:
-                messages.error(request, "Location is the same, no update")
-            return redirect('ticket_detail', pk=pk)
+                print("nooooo")
+                return JsonResponse({'status': 'info', 'message': 'Location is the same, no update'})
         
         elif 'status-submit' in request.POST and status_form.is_valid():
             ticket.log_update(user=request.user, message=f"Status updated by {request.user}")
@@ -156,7 +159,7 @@ def add_comment(request, pk):
             return redirect('ticket_detail', pk=pk)
         else:
             # Form is not valid, comment is blank
-            messages.error(request, "blaaaaaaaaaaank")
+            messages.error(request, "Comment can't be blank")
             return redirect('ticket_detail', pk=pk)
     else:
         form = CommentForm()
