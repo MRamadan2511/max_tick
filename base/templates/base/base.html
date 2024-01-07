@@ -28,48 +28,20 @@
 {% endif %}
 <div id="messages-container">
 </div>   
-  {% if messages %}
-                <div class="alert alert-dismissible fade show" role="alert">
-                    {% for message in messages %}
-                    {% if message.tags == 'error' %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% elif message.tags == 'warning' %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% elif message.tags == 'success' %}
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% elif message.tags == 'info' %}
-                        <div class="alert alert-info alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-  
-            <script>
-                setTimeout(function() {
-                let alerts = document.querySelectorAll('.alert');
-                alerts.forEach(alert => {
-                    alert.style.display = 'none';
-                });
-                }, 9000); // 9000 milliseconds = 9 seconds
-            </script>
-      {% endif %}        
+{% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible shadow fade show" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {{ message | safe }}
+    </div>
+{% endfor %}
+    <script>
+        setTimeout(function() {
+        let alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            alert.style.display = 'none';
+        });
+        }, 9000); // 9000 milliseconds = 9 seconds
+    </script>
 
     <div class="container">
         {% block content %}
