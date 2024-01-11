@@ -9,6 +9,11 @@ urlpatterns = [
     path('ticket_create/', views.ticket_create, name='ticket_create'),
     path('ticket_detail/<int:pk>/', views.ticket_detail, name='ticket_detail'),
     path('ticket_detail/<int:pk>/add_comment/', views.add_comment, name='add_comment'),
+    path('ticket_detail/<int:pk>/update_location/', views.ticket_location_update, name='update_location'),
+    path('ticket_detail/<int:pk>/update_status/', views.ticket_status_update, name='update_status'),
+    path('ticket_detail/<int:pk>/update_tag/', views.ticket_tag_update, name='update_tag'),
+    path('ticket_detail/<int:pk>/update_department/', views.ticket_department_update, name='update_department'),
+    path('ticket_detail/<int:pk>/update_assigned/', views.ticket_assigned_update, name='update_assigned'),
     path('dashboard/', views.dashboard, name='dashboard'),
 
     path('login/', views.login, name='login'),

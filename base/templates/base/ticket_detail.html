@@ -64,8 +64,12 @@
 
       
       {% if request.user.user_type.type == "agent" %}
-      <div class="col-md-4 card">   
-        {% include "base/ticket_side_bar.html" %}
+      <div class="col-md-4 card">
+        {% include "base/location_update.html" %}   
+        {% include "base/status_update.html" %}   
+        {% include "base/tag_update.html" %}   
+        {% include "base/department_update.html" %}   
+        {% include "base/assigned_to_update.html" %}   
         <hr>
         <div class="">
           <p class="text-center"> Ticket Logs </p>

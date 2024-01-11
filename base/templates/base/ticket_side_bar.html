@@ -23,10 +23,10 @@
     <li class="list-group-item justify-content-between align-items-center list-group-item-dark">
         Status:
         {% if user_role == 'admin' %}
-            <form method="post" style="display: flex; align-items: center;">
+            <form method="post" id="update-status-form" style="display: flex; align-items: center;">
                 {% csrf_token %}
                 {{ status_form|crispy }}
-                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="status-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="status-submit" class="btn btn-sm btn-outline-primary ">Update1</button>
             </form>
         {% else %}
                 <span class="badge bg-secondary rounded-pill"> {{ ticket.status }}</span>
@@ -38,10 +38,10 @@
     <li class="list-group-item  justify-content-between align-items-center list-group-item-light">
         Tag:
         {% if user_role == 'admin' %}
-            <form method="post" style="display: flex; align-items: center;">
+            <form method="post"  id="update-tag-form" style="display: flex; align-items: center;">
                 {% csrf_token %}
                 {{ tag_form|crispy }}
-                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="tag-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="tag-submit" class="btn btn-sm btn-outline-primary ">Update2</button>
             </form>
         {% else %}
         <span class="badge bg-info rounded-pill"> {{ ticket.tag }}</span>
@@ -53,10 +53,10 @@
     <li class="list-group-item  justify-content-between align-items-center list-group-item-dark">
         Department:
         {% if user_role == 'admin' %}
-            <form method="post" style="display: flex; align-items: center;">
+            <form method="post" id="update-department-form" style="display: flex; align-items: center;">
                 {% csrf_token %}
                 {{ department_form|crispy }}
-                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="department-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="department-submit" class="btn btn-sm btn-outline-primary ">Update3</button>
             </form>
         {% else %}
         <span class="badge bg-primary rounded-pill"> {{ ticket.department }} </span>
@@ -68,11 +68,11 @@
     <li class="list-group-item  justify-content-between align-items-center list-group-item-light">
         Assigned To:
         {% if user_role == 'admin' %}
-            <form method="post" style="display: flex; align-items: center;">
+            <form method="post" id="update-assigned-form" style="display: flex; align-items: center;">
                 {% csrf_token %}
                 {{ assigned_to_form|crispy }}
                 
-                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="assigned-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="assigned-submit" class="btn btn-sm btn-outline-primary ">Update4</button>
             </form>
         {% else %}
         <span class="badge bg-info rounded-pill"> {{ assigned_to.tag }}</span>
@@ -84,40 +84,57 @@
 </ul>
 
 <script>
-    $("#id_assigned_to").select2();
-    {% comment %} $("#id_assigned_to").select2() {% endcomment %}
-    $("#update-location-form").submit(function(event) {
-        event.preventDefault();
+    $(document).ready(function() {
+        function submitForm(formId) {
+            var form = $(formId);
         
-        $.ajax({
-            type: 'POST',
-            url: '{% url "ticket_detail" pk=ticket.pk %}',
-            data: $(this).serialize(),
-            success: function(response) {
-                var messagesContainer = $("#messages-container");
-
-                if (response.status === 'success') {
-                    messagesContainer.html('<div class="alert alert-success alert-dismissible fade show" role="alert">'
-                        + response.message
-                        + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
-                        + '</div>');
-                    // Optionally update other parts of the page if needed
-                } else {
-                    messagesContainer.html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'
-                        + response.message
-                        + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
-                        + '</div>');
-                }
-                // Hide the alert after 9 seconds
-                setTimeout(function() {
-                    messagesContainer.find('.alert').alert('close');
-                }, 9000);
-
-            },
-            error: function() {
-                alert('An error occurred.');
-            }
-        });
-    });
-
+            form.submit(function (event) {
+                event.preventDefault();
+        
+                var formData = new FormData(form[0]);
+                console.log(formData);
+        
+                $.ajax({
+                    type: 'POST',
+                    url: form.attr('action'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                    console.log(response);
+                        var messagesContainer = $("#messages-container");
+        
+                        if (response.status === 'success') {
+                            messagesContainer.html('<div class="alert alert-success alert-dismissible fade show" role="alert">'
+                                + response.message
+                                + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+                                + '</div>');
+                            // Optionally update other parts of the page if needed
+                        } else {
+                            messagesContainer.html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                                + response.message
+                                + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+                                + '</div>');
+                        }
+                        // Hide the alert after 9 seconds
+                        setTimeout(function () {
+                            messagesContainer.find('.alert').alert('close');
+                        }, 9000);
+                    },
+                    error: function () {
+                        alert('An error occurred.');
+                    }
+                });
+            });
+        }
+        
+        // Call the function for each form
+    submitForm("#update-tag-form");
+    submitForm("#update-location-form");
+    submitForm("#update-status-form");
+    submitForm("#update-department-form");
+    submitForm("#update-assigned-form");
+    $("#id_assigned_to").select2();
+    
+});
 </script>

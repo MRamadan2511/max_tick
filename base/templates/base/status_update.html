@@ -1,0 +1,71 @@
+{% load crispy_forms_tags %}
+
+
+
+    {% comment %}    Status Start     {% endcomment %}
+    <li class="list-group-item justify-content-between align-items-center list-group-item-dark">
+        Status:
+        {% if user_role == 'admin' %}
+            <form method="post" id="update-status-form" style="display: flex; align-items: center;" action="{% url 'update_status' pk=ticket.pk %}">
+                {% csrf_token %}
+                {{ status_form|crispy }}
+                <button type="submit" style="margin-left: 1.5em; margin-bottom: 1.5em;" name="status-submit" class="btn btn-sm btn-outline-primary ">Update</button>
+            </form>
+        {% else %}
+                <span class="badge bg-secondary rounded-pill"> {{ ticket.status }}</span>
+        {% endif %}
+    </li>
+
+
+    <script>
+        $(document).ready(function() {
+            function submitForm(formId) {
+                var form = $(formId);
+            
+                form.submit(function (event) {
+                    event.preventDefault();
+            
+                    var formData = new FormData(form[0]);
+                    console.log(formData);
+            
+                    $.ajax({
+                        type: 'POST',
+                        url: form.attr('action'),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                        console.log(response);
+                            var messagesContainer = $("#messages-container");
+            
+                            if (response.status === 'success') {
+                                messagesContainer.html('<div class="alert alert-success alert-dismissible fade show" role="alert">'
+                                    + response.message
+                                    + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+                                    + '</div>');
+                                // Optionally update other parts of the page if needed
+                            } else {
+                                messagesContainer.html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                                    + response.message
+                                    + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+                                    + '</div>');
+                            }
+                            // Hide the alert after 9 seconds
+                            setTimeout(function () {
+                                messagesContainer.find('.alert').alert('close');
+                            }, 9000);
+                        },
+                        error: function () {
+                            alert('An error occurred.');
+                        }
+                    });
+                });
+            }
+            
+            // Call the function for each form
+        submitForm("#update-status-form");
+
+        
+    });
+    </script>
+    
