@@ -315,16 +315,20 @@ def ticket_location_update(request, pk):
             
     return render(request, 'base/ticket_detail.html', {'location_form': location_form, })
 
+
+
 @login_required
 def ticket_status_update(request, pk):
+    print("function")
     ticket = get_object_or_404(Ticket, pk=pk)
     if request.method == 'POST':
-        status_form =  UpdateStatusForm(request.POST, instance=ticket)
+        print("Poooooooooooost")
+        status_form = UpdateStatusForm(request.POST, instance=ticket)
         if status_form.is_valid():
             ticket = get_object_or_404(Ticket, pk=pk)
             new_status = status_form.cleaned_data['status']
 
-            if ticket.location != new_status:
+            if ticket.status != new_status:
                 ticket.log_update(user=request.user, message=f"Status updated by {request.user}")
                 status_form.save()
                 # messages.success(request, "Location Updated Successfully")
