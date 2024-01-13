@@ -79,13 +79,7 @@ class CommentForm(forms.ModelForm):
 
             }
    
-    def clean_comment(self):
-        comment = self.cleaned_data.get('comment', '').strip()
-
-        if not comment:
-            raise forms.ValidationError("Comment cannot be blank.")
-
-        return comment
+    
     
 
 

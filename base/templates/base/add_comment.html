@@ -1,5 +1,10 @@
 {% load crispy_forms_tags %}
 
+<div id="comments-section">
+    <!-- Existing comments will be dynamically updated here -->
+    {% include 'base/comments.html' %}
+</div>
+
 <p class=" text-center">
     <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
         {% if request.user.user_type.type == "Courier" %}
@@ -9,7 +14,7 @@
         {% endif %}
     </a>
     <div class="collapse" id="collapseExample">
-        <form  class="" method="post" style="margin-top: 1.3em;" enctype="multipart/form-data" action="{% url 'add_comment' pk=ticket.pk %}">
+        <form id="comment-form" method="post" style="margin-top: 1.3em;" enctype="multipart/form-data">
             {% csrf_token %}
             {{ comment_form.media }}
             {{ comment_form | crispy}} 
@@ -17,10 +22,86 @@
                 {% if request.user.user_type.type == "Courier" %}
                 أضف
                 {% else %}
-                    Submit
+                Submit
                 {% endif %}
-                
             </button>
         </form>
+        
       </div>
+    
+
+
+      <script>
+        function showToast(message, alertType) {
+            var toastClass = alertType === 'success' ? 'bg-success' : 'bg-danger';
+            var toastHTML = '<div class="toast ' + toastClass + '" role="alert" aria-live="assertive" aria-atomic="true">'
+                + '<div class="toast-body d-flex justify-content-between align-items-center text-white">'
+                + message
+                + '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>'
+                + '</div>'
+                + '</div>';
+    
+            $('#toast-container').append(toastHTML);
+            var toast = new bootstrap.Toast($('#toast-container .toast').last());
+            toast.show();
+        }
+    
+        $(document).ready(function() {
+            // Intercept the form submission
+            $('#comment-form').submit(function(e) {
+                // Update CKEditor instances before submitting the form
+                for (instance in CKEDITOR.instances) {
+                    CKEDITOR.instances[instance].updateElement();
+                }
+        
+                // Prevent the default behavior
+                e.preventDefault();
+        
+                // Get the form data
+                var formData = new FormData($('#comment-form')[0]);
+        
+                // Submit the form using AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "add_comment" pk=ticket.pk %}',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            // Update the comments section
+                            var comment = response.comment;
+                            var commentHtml = `
+                                <div class="ticket-comments">
+                                    <div class="comment text-end">
+                                        <p class="user-info">${comment.user}</p>
+                                        <p class="timestamp underline">${comment.created}</p>
+                                        <p class="pt-2">${comment.comment}</p>
+                                        ${comment.comment_image ? `<a href="${comment.comment_image}" target="_blank"><p class="text-end">Attached File</p></a>` : ''}
+                                    </div>
+                                </div>`;
+        
+                            $('#comments-section').append(commentHtml);
+                            
+                            // Clear CKEditor content
+                            for (instance in CKEDITOR.instances) {
+                                CKEDITOR.instances[instance].setData('');
+                            }
+                            $('#id_comment_image').val('');
+    
+                            // Show success toast
+                            showToast('Comment added successfully', 'success');
+                        } else {
+                            // Show error toast
+                            showToast(response.error_message, 'danger');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Show error toast
+                        showToast('Error: ' + error, 'danger');
+                    }
+                });
+            });
+        });
+    </script>
     

@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db import models,connection
 from django.db.models import Count
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 
 
 import plotly.express as px
@@ -80,21 +80,28 @@ def ticket_create(request):
 @login_required
 def ticket_detail(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
-    comments = ticket.comment_set.all()
-    logs = TicketLog.objects.filter(ticket=ticket)
-    user_role = request.user.user_role.role
+    # Check if the user is the creator or assigned to the ticket, and the location matches
+    if request.user == ticket.user or request.user == ticket.assigned_to or request.user.location == ticket.location or request.user.is_superuser:
+        comments = ticket.comment_set.all()
+        logs = TicketLog.objects.filter(ticket=ticket)
+        user_role = request.user.user_role.role
 
-    comment_form = CommentForm()
-    location_form = UpdateLocationForm(instance=ticket)
-    status_form = UpdateStatusForm(instance=ticket)
-    tag_form = UpdateTagForm(instance=ticket)
-    department_form = UpdateDepartmentForm(instance=ticket)
-    assigned_to_form = UpdateAssignedToForm(instance=ticket)
+        comment_form = CommentForm()
+        location_form = UpdateLocationForm(instance=ticket)
+        status_form = UpdateStatusForm(instance=ticket)
+        tag_form = UpdateTagForm(instance=ticket)
+        department_form = UpdateDepartmentForm(instance=ticket)
+        assigned_to_form = UpdateAssignedToForm(instance=ticket)
 
-    return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments,'user_role':user_role,
+        return render(request, 'base/ticket_detail.html', {'ticket': ticket, 'comments': comments,'user_role':user_role,
                                                        'comment_form': comment_form,'department_form':department_form,
                                                          'location_form': location_form,'tag_form':tag_form,'logs':logs,
                                                          'status_form':status_form,'assigned_to_form':assigned_to_form})
+
+        
+    else:
+        # If the user does not meet the criteria, you can redirect them or show an error page
+        return HttpResponseForbidden("You do not have permission to view this ticket.")
 
 
 @login_required
@@ -102,23 +109,29 @@ def add_comment(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
 
     if request.method == 'POST':
-        form = CommentForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            comment = form.save(commit=False)
+        comment_form = CommentForm(request.POST, request.FILES)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
             comment.ticket = ticket
-            comment.user = request.user  # Assuming you have user authentication
+            comment.user = request.user
             comment.save()
-            messages.info(request, "comment added Successfully")
-            return redirect('ticket_detail', pk=pk)
+
+            # Return comment data as JSON
+            data = {
+                'user': comment.user.name,
+                'created': comment.created.strftime('%Y-%m-%d %H:%M:%S'),
+                'comment': comment.comment,
+                'comment_image': comment.comment_image.url if comment.comment_image else None,
+            }
+            print("okkkkk")
+            return JsonResponse({'success': True, 'comment': data})
         else:
-            # Form is not valid, comment is blank
-            messages.error(request, "Comment can't be blank")
-            return redirect('ticket_detail', pk=pk)
+            print(comment_form.errors)
+            return JsonResponse({'success': False, 'error_message': 'Comment can\'t be blank'})
     else:
-        form = CommentForm()
-        
-    return render(request, 'base/ticket_detail.html', {'form': form, 'ticket': ticket, })
+        comment_form = CommentForm()
+
+    return render(request, 'base/ticket_detail.html', {'comment_form': comment_form, 'ticket': ticket})
 
 
 
