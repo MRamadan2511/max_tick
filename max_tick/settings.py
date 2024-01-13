@@ -191,9 +191,9 @@ AUTH_USER_MODEL = 'base.user'
 
 
 MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-info',
-    messages.INFO: 'alert-info',
-    messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
-    messages.ERROR: 'alert-danger',
+    messages.DEBUG: 'bg-danger',
+    messages.INFO: 'bg-danger',
+    messages.SUCCESS: 'bg-danger',
+    messages.WARNING: 'bg-danger',
+    messages.ERROR: 'bg-danger',
 }

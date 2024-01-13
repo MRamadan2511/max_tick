@@ -27,22 +27,33 @@
 {% if request.user.is_authenticated %}
   {% include 'base/nav.html' %}
 {% endif %}
-<div id="messages-container">
-</div>   
+<div id="toast-container" style="position: fixed; top: 20px; right: 16px; z-index: 1050;"></div>
+
+  
 {% for message in messages %}
-    <div class="alert {{ message.tags }} alert-dismissible shadow fade show" role="alert">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        {{ message | safe }}
+'<div class="toast {{message.tags}} " role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 16px; z-index: 1050;">
+    <div class="toast-body d-flex justify-content-between align-items-center text-white">
+        {{message|safe}}
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
+</div>
 {% endfor %}
-    <script>
-        setTimeout(function() {
-        let alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            alert.style.display = 'none';
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElements = document.querySelectorAll('.toast');
+
+        toastElements.forEach(function (toast, index) {
+            var bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            if (index === toastElements.length - 1) {
+                setTimeout(function () {
+                    bsToast.hide();
+                }, 9000); // 9000 milliseconds = 9 seconds
+            }
         });
-        }, 9000); // 9000 milliseconds = 9 seconds
-    </script>
+    });
+</script>
 
     <div class="container">
         {% block content %}

@@ -126,7 +126,8 @@
 
     <thead class="table-dark">
         <tr class ="text-center">
-            <th scope="col">ID</th>
+            <th scope="col">Ticket ID</th>
+            <th scope="col">order ID</th>
             <th scope="col">Tag</th>
             <th scope="col">Location</th>
             <th scope="col">Status</th>
@@ -138,6 +139,7 @@
     <tbody>
         {% for tic in ticket %}
         <tr class ="text-center">
+            <td> <a class=" text-decoration-none" href="{% url 'ticket_detail' tic.id %}">{{ tic.id }} </a></td>
             <td> <a class=" text-decoration-none" href="{% url 'ticket_detail' tic.id %}">{{ tic.order_id }} </a></td>
             <td> {{tic.tag}}</td>
             <td> {{tic.location}}</td>
