@@ -52,6 +52,7 @@ CKEDITOR_UPLOAD_PATH = "image/"
 CKEDITOR_CONFIGS = {
     'default': {
         'removePlugins': 'uploadimage,image,exportpdf',  # Remove the plugins related to file/image upload
+        'height':100,
         # 'skin': 'moono',
         # 'width':'1100',
         # 'languages':'rtl',
